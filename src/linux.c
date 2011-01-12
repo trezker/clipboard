@@ -19,8 +19,8 @@
 // 20 for filename, 25 for command line, 1 for terminating character.
 #define COMMAND_SIZE 46
 
-#ifdef CLIPBOARD_ERRMSG_SIZE
-#error CLIPBOARD_ERRMSG_SIZE is already defined... :(
+#ifdef CLIPBOARD_ERRMSG_SIZE_
+#error CLIPBOARD_ERRMSG_SIZE_ is already defined... :(
 #endif
 
 #define CLIPBOARD_ERRMSG_SIZE_ 512
