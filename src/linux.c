@@ -65,7 +65,7 @@ int Set_clipboard_text(const char * const text, const int size)
 
     len = strlen(buffer);
 
-    FILE * xclip = popen("xclip -selection c", "w");
+    FILE * xclip = popen("/usr/bin/xclip -selection c", "w");
 
     if(!xclip)
     {
@@ -109,7 +109,7 @@ const char * Get_clipboard_text()
     text[0] = '\0';
 
     char buffer[BUFSIZ];
-    FILE * xclip = popen("xclip -o -selection c", "r");
+    FILE * xclip = popen("/usr/bin/xclip -o -selection c", "r");
     int len;
     int total_len = 0;
 
