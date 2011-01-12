@@ -153,6 +153,8 @@ cleanup:
     {
         int exitcode = pclose(xclip);
 
+        xclip = 0;
+
         if(exitcode != 0)
         {
             Set_clipboard_errmsg("xclip returned nonzero exit status.");
