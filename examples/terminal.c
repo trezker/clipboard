@@ -21,13 +21,31 @@ void interactive()
 				{
 					printf("Clipboard set: %s\n", copy);
 				}
+                else
+                {
+                    fprintf(
+                            stderr,
+                            "Set failed: %s\n",
+                            Get_clipboard_errmsg());
+                }
 				free(copy);
 			}
 		}
 		if(strncmp(in, "get", 3) == 0)
 		{
 			const char* get = Get_clipboard_text();
-			printf("Clipboard got: %s\n", get);
+
+            if(get)
+            {
+			    printf("Clipboard got: %s\n", get);
+            }
+            else
+            {
+                fprintf(
+                        stderr,
+                        "Get failed: %s\n",
+                        Get_clipboard_errmsg());
+            }
 		}
 	}
 }
