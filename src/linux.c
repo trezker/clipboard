@@ -69,6 +69,7 @@ int Set_clipboard_text(const char * const text, const int size)
 
     if(!xclip)
     {
+        Set_clipboard_errmsg("Failed to open a pipe to xclip");
         goto cleanup;
     }
 
@@ -112,6 +113,12 @@ const char * Get_clipboard_text()
     int len;
     int total_len = 0;
 
+    if(!xclip)
+    {
+        Set_clipboard_errmsg("Failed to open a pipe to xclip");
+        goto fatal;
+    }
+
     do
     {
         len = fread(buffer, sizeof(char), BUFSIZ - 1, xclip);
@@ -137,8 +144,7 @@ const char * Get_clipboard_text()
         else if(ferror(xclip))
         {
             Set_clipboard_errmsg("Failed to read from xclip child.");
-            free(text);
-            goto cleanup;
+            goto fatal;
         }
     }while(len == BUFSIZ - 1);
 
@@ -150,11 +156,15 @@ cleanup:
         if(exitcode != 0)
         {
             Set_clipboard_errmsg("xclip returned nonzero exit status.");
-            free(text);
-            return (const char *)0;
+            goto fatal;
         }
     }
 
     return text;
+
+fatal:
+    free(text);
+    text = 0;
+    goto cleanup;
 }
 
