@@ -8,7 +8,6 @@ solution (lib_name)
 		kind "StaticLib"
 		language "C"
 		location "build"
-		files { "src/*.c" }
 		targetdir "build/lib"
 		includedirs { "include" }
 
@@ -19,6 +18,12 @@ solution (lib_name)
 		configuration "Release"
 			defines { "NDEBUG" }
 			flags { "Optimize" }
+
+		configuration "linux"
+			files { "src/linux.c" }
+
+		configuration "windows"
+			files { "src/windows.c" }
 
 	ex_dependencies = {"allegro","allegro_image" }
 	examples = os.matchfiles("examples/*.c")
@@ -72,10 +77,6 @@ newaction {
 		end
 	end
 }
-
-if _ACTION == "gmake" then
-	print ("doing the game beotch")
-end
 
 if not _OPTIONS["dir"] then
    _OPTIONS["dir"] = "/usr/local/"
