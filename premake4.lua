@@ -35,27 +35,23 @@ solution (lib_name)
 			location "build"
 			files { name }
 			includedirs { "src" }
---			libdirs { "../lib" }
 			links (lib_name)
 --			links (ex_dependencies)
 			targetdir "build/examples"
---			postbuildcommands { "cd .. && build/examples/"..sname }
 
 			configuration "Debug"
 				defines { "DEBUG" }
 				flags { "Symbols", "ExtraWarnings" }
-            links {"alld"}
+--            links {"alld"}
 			configuration "Release"
 				defines { "NDEBUG" }
 				flags { "Optimize", "ExtraWarnings" }
-				links {"alleg"}
+--				links {"alleg"}
 	end
 
 slash = "/"
---badslash = "\";
 if os.is("windows") then
    slash = "\\"
---   badslash = "/"
 end
 
 newoption {

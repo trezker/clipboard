@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include "..\src\clipboard.h"
+#include "clipboard.h"
 #include <stdlib.h>
 
 void interactive()
