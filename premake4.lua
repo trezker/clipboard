@@ -25,7 +25,7 @@ solution (lib_name)
 		configuration "windows"
 			files { "src/windows.c" }
 
-	ex_dependencies = {"allegro","allegro_image" }
+--	ex_dependencies = {"allegro","allegro_image" }
 	examples = os.matchfiles("examples/*.c")
 	for index, name in pairs(examples) do
 		sname = name:sub(10, name:len()-2);
@@ -37,18 +37,26 @@ solution (lib_name)
 			includedirs { "src" }
 --			libdirs { "../lib" }
 			links (lib_name)
-			links (ex_dependencies)
+--			links (ex_dependencies)
 			targetdir "build/examples"
 --			postbuildcommands { "cd .. && build/examples/"..sname }
 
 			configuration "Debug"
 				defines { "DEBUG" }
 				flags { "Symbols", "ExtraWarnings" }
-	 
+            links {"alld"}
 			configuration "Release"
 				defines { "NDEBUG" }
 				flags { "Optimize", "ExtraWarnings" }
+				links {"alleg"}
 	end
+
+slash = "/"
+--badslash = "\";
+if os.is("windows") then
+   slash = "\\"
+--   badslash = "/"
+end
 
 newoption {
    trigger     = "dir",
@@ -56,32 +64,103 @@ newoption {
    description = "Choose a path to install dir",
 }
 
+-- note : os.matchfiles expects directory separators to be forward slashes
 newaction {
 	trigger     = "install",
 	description = "Install the software",
 	execute = function ()
 		-- copy files, etc. here
-		os.mkdir(_OPTIONS["dir"].."lib/");
+
+		libdir = _OPTIONS["dir"].."lib".."/"
+		os.mkdir(libdir);
 		files = os.matchfiles("build/lib/*")
-		print ("Installing lib files to " .. _OPTIONS["dir"] .."lib/")
+		print ("")
+		print ("Installing lib files to " .. libdir)
 		for k, f in pairs(files) do
 			print ("Copying " .. f)
-			os.copyfile(f, _OPTIONS["dir"].."lib/")
+			success , errormsg = os.copyfile(f, libdir..getshortfilename(f))
+			if (success == nil) then
+            print(errormsg)
+         end
 		end
-		os.mkdir(_OPTIONS["dir"].."include/"..lib_name.."/");
+
+		includedir = _OPTIONS["dir"].."include/"..lib_name.."/"
+		os.mkdir(includedir);
 		files = os.matchfiles("src/*.h")
-		print ("Installing header files to " .. _OPTIONS["dir"] .."include/")
+		print ("")
+		print ("Installing header files to " .. includedir)
 		for k, f in pairs(files) do
 			print ("Copying " .. f)
-			os.copyfile(f, _OPTIONS["dir"].."include/"..lib_name.."/")
+			success , errormsg = os.copyfile(f , includedir..getshortfilename(f))
+			if (success == nil) then
+            print(errormsg)
+         end
 		end
+
 	end
+}
+
+newaction {
+   trigger = "uninstall",
+   description = "Uninstall the software",
+   execute = function ()
+
+		libdir = _OPTIONS["dir"].."lib".."/"
+		files = os.matchfiles("build/lib/*")
+		print ("")
+		print ("Uninstalling lib files from " .. libdir)
+		for k, f in pairs(files) do
+			print ("Removing " .. f)
+			success , errormsg = os.remove(libdir..getshortfilename(f))
+			if (success == nil) then
+            print(errormsg)
+         end
+		end
+
+		includedir = _OPTIONS["dir"].."include/"..lib_name.."/"
+		files = os.matchfiles("src/*.h")
+		print ("")
+		print ("Uninstalling header files from " .. includedir)
+		for k, f in pairs(files) do
+			print ("Removing " .. f)
+			success , errormsg = os.remove(includedir..getshortfilename(f))
+			if (success == nil) then
+            print(errormsg)
+         end
+		end
+		print ("Removing "..includedir)
+		success , errormsg = os.rmdir(includedir)
+		if (success == nil) then
+		   print(errormsg)
+      end
+		
+   end
 }
 
 if not _OPTIONS["dir"] then
    _OPTIONS["dir"] = "/usr/local/"
 end
 
+_OPTIONS["dir"] = string.gsub(_OPTIONS["dir"] , "\\" , "/")
+
 if not ("/" == _OPTIONS["dir"]:sub(_OPTIONS["dir"]:len())) then
 	_OPTIONS["dir"] = _OPTIONS["dir"] .. "/"
 end
+
+
+function getshortfilename(fullfilename)
+   -- first, replace all backslashes with forward slashes
+   if (type(fullfilename) ~= "string") then
+      return nil 
+   end
+   shorter = string.gsub(fullfilename , "\\" , "/")
+   while (true) do
+      start , stop = string.find(shorter , "/")
+      if (start == nil) then break end
+      shorter = string.sub(shorter , stop + 1)
+   end
+   return shorter
+end
+
+
+

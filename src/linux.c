@@ -29,7 +29,7 @@ char clipboard_errmsg[CLIPBOARD_ERRMSG_SIZE_];
 
 const int CLIPBOARD_ERRMSG_SIZE = CLIPBOARD_ERRMSG_SIZE_;
 
-char * Get_clipboard_errmsg(void)
+const char * Get_clipboard_errmsg(void)
 {
     return clipboard_errmsg;
 }
