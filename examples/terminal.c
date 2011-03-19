@@ -56,6 +56,14 @@ void interactive()
                         Get_clipboard_errmsg());
             }
 		}
+		if(strncmp(in, "help", 4) == 0)
+		{
+		    printf("\
+==== Allegro clipboard tester ====\n\
+get - prints text from clipboard\n\
+set [text]- sets text in clipboard\n\
+q - quits this program\n");
+		}
 	}
 }
 
