@@ -25,6 +25,9 @@ solution (lib_name)
 		configuration "windows"
 			files { "src/windows.c" }
 
+		configuration "macosx"
+			files { "src/mac.c" }
+
 --	ex_dependencies = {"allegro","allegro_image" }
 	examples = os.matchfiles("examples/*.c")
 	for index, name in pairs(examples) do
